@@ -1,0 +1,8 @@
+think 0
+loop {
+    print 65 char print 20 char print 10 print 10 char
+    think thought + 1
+    if 10 {
+        break
+    }
+}
