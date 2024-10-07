@@ -15,7 +15,7 @@ impl<'t> Parser<'t> {
     }
     pub fn parse(&mut self) -> Result<Vec<Node>, String> {
         let mut nodes = Vec::new();
-        println!("Parsing...");
+        //println!("Parsing...");
         loop {
             match self.parse_expression() {
                 Ok(Some(n)) => {
@@ -26,7 +26,7 @@ impl<'t> Parser<'t> {
                 Err(e) => return Err(format!("Parsing error: {e}"))
             }
         }
-        println!("Parsed!");
+        //println!("Parsed!");
 
         Ok(nodes)
     }
@@ -37,7 +37,7 @@ impl<'t> Parser<'t> {
             Some(token) => token.clone(),
             None => return Ok(None)
         };
-        println!("Parsing expression #{expr}, starting with token '{token:?}'...");
+        //println!("Parsing expression #{expr}, starting with token '{token:?}'...");
         let r = match token {
             Token::Keyword(k) => {
                 match k {
@@ -52,7 +52,7 @@ impl<'t> Parser<'t> {
                         Ok(Some(Node::Break))
                     },
                     _ => {
-                        println!("Keyword not recognized");
+                        println!("Keyword not recognized! Found at expression #{expr}");
                         self.advance();
                         Ok(Some(Node::Break))
                     }
@@ -71,12 +71,12 @@ impl<'t> Parser<'t> {
     pub fn advance(&mut self) -> Option<&Token> {
         self.pos += 1;
         let p = self.peek();
-        println!("Position {} > {p:?}", self.pos);
+        //println!("Position {} > {p:?}", self.pos);
         p
     }
     pub fn undo(&mut self) -> Option<&Token> {
         self.pos -= 1;
-        println!("Undoing...");
+        //println!("Undoing...");
         self.peek()
     }
 }

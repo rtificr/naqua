@@ -7,7 +7,7 @@ use crate::util::types::Number::Thought;
 
 impl<'t> Parser<'t> {
     pub fn parse_num(&mut self, num: Number) -> Result<Option<Node>, String> {
-        println!("Parsing number {num:?}...");
+        //println!("Parsing number {num:?}...");
         self.advance();
 
         let mut node = if num.thought() { Node::Literal(Number::Thought) } else { Node::Literal(num) };
@@ -30,24 +30,24 @@ impl<'t> Parser<'t> {
             );
         }
 
-        println!("Checking for char...");
+        //println!("Checking for char...");
 
         let result = match self.peek() {
             Some(&Token::Keyword(Keyword::Char)) => {
-                println!("Char found!");
+                //println!("Char found!");
                 self.advance();
                 Ok(Some(Node::Char(Box::new(node))))
             }
             Some(_) | None => {
-                println!("No char found!");
+                //println!("No char found!");
                 Ok(Some(node))
             }
         };
-        println!("Done parsing number, moving on...");;
+        //println!("Done parsing number, moving on...");
         result
     }
     pub fn parse_num_head(&mut self, num: Number) -> Result<Option<Node>, String> {
-        println!("Parsing number head {num:?}...");
+        //println!("Parsing number head {num:?}...");
         
         if num.int().is_none() {
             return Err(format!("Floats are not valid indices! Found at expression #{}", self.expr));
@@ -55,12 +55,12 @@ impl<'t> Parser<'t> {
         let result = self.parse_num(num)?.unwrap();
         let expr = self.expr.clone();
 
-        println!("Head Peek: {:?}", self.peek());
+        //println!("Head Peek: {:?}", self.peek());
         let next = match self.peek() {
             Some(t) => t.clone(),
             None => return Err(format!("Unable to process a lone number '{:?}'! Found at expression #{expr}", self.peek()))
         };
-        println!("NEXT: {next:?}");
+        //println!("NEXT: {next:?}");
         match next {
             Token::Keyword(Keyword::In) => {
                 self.advance(); // Move past the 'in' keyword
@@ -96,7 +96,7 @@ impl<'t> Parser<'t> {
     pub fn parse_out(&mut self) -> Result<Option<Node>, String> {
         self.advance();
 
-        println!("Parsing Out...");
+        //println!("Parsing Out...");
 
         let expr = self.expr.clone();
 
