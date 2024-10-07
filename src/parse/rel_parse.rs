@@ -7,8 +7,6 @@ impl<'t> Parser<'t> {
     pub fn parse_if(&mut self) -> Result<Option<Node>, String> {
         self.advance();
         
-        println!("Parsing If...");
-        
         let cond = match self.peek() {
             Some(c) => match self.parse_num(match c {
                 Token::Data(n) => *n,
@@ -60,12 +58,10 @@ impl<'t> Parser<'t> {
             return Err(format!("Expected opening brace for if statement at expression #{}", self.expr));
         }
 
-        println!("DONE");
         Ok(Some(Node::If(Box::new(cond), Box::new(body))))
     }
     pub fn parse_loop(&mut self) -> Result<Option<Node>, String> {
         self.advance();
-        println!("Parsing Loop...");
 
         let mut body = Vec::new();
 

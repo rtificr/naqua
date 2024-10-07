@@ -19,6 +19,9 @@ fn main() {
     }
     let input = fs::read_to_string(args.get(1).unwrap()).unwrap();
 
+    println!("Naqua v1.0.0");
+    println!();
+
     let mut tokenizer = Tokenizer::new(input);
     match tokenizer.tokenize() {
         Ok(tokens) => {

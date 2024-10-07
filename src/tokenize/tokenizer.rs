@@ -13,7 +13,6 @@ impl Tokenizer {
         Self { pos: 0, row: 0, input }
     }
     pub fn tokenize(&mut self) -> Result<Vec<Token>, String> {
-        println!("Tokenizing...");
         let mut tokens = Vec::new();
         let chars = self.input.chars().collect::<Vec<char>>();
 
