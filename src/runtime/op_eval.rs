@@ -21,7 +21,7 @@ impl Runner {
             _ => Number::Int(0)
         };
 
-        if l.int().is_some() || r.int().is_some() {
+        if l.int().is_some() && r.int().is_some() {
             match op {
                 Add => EvalType::Int(l.int().unwrap() + r.int().unwrap()),
                 Sub => EvalType::Int(l.int().unwrap() - r.int().unwrap()),
