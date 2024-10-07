@@ -6,7 +6,6 @@ use crate::util::types::Keyword;
 
 impl<'t> Parser<'t> {
     pub fn parse_think(&mut self) -> Result<Option<Node>, String>{
-        println!("Parsing Think...");
         self.advance();
         let expr = self.expr.clone();
 
@@ -30,7 +29,6 @@ impl<'t> Parser<'t> {
         result
     }
     pub fn parse_print(&mut self) -> Result<Option<Node>, String> {
-        println!("Parsing Print...");
         self.advance();
         let expr = self.expr.clone();
 
