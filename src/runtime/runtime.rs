@@ -4,7 +4,7 @@ use crate::parse::node::Node;
 use crate::util::types::Number;
 
 pub struct Runner {
-    pub(crate) stack: HashMap<i32, Number>,
+    pub(crate) stack: HashMap<i64, Number>,
     pub(crate) thought: Number,
     expr: usize,
 }
@@ -80,7 +80,7 @@ impl Runner {
     }
     fn stack_get(&self, i: Number) -> Number {
         let index = if i.int().is_none() {
-            i.float().unwrap().floor() as i32
+            i.float().unwrap().floor() as i64
         } else {
             i.int().unwrap()
         };

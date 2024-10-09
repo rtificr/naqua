@@ -15,7 +15,7 @@ impl Runner {
             Node::Char(n) => {
                 match self.eval(n) {
                     EvalType::Int(n) => EvalType::Char(charify(n)),
-                    EvalType::Float(n) => EvalType::Char(charify(n.floor() as i32)),
+                    EvalType::Float(n) => EvalType::Char(charify(n.floor() as i64)),
                     EvalType::Char(c) => EvalType::Char(c)
                 }
             }
@@ -25,10 +25,10 @@ impl Runner {
             Node::Out(n) => {
                 let index = match self.eval(n) {
                     EvalType::Int(n) => n,
-                    EvalType::Float(n) => n as i32,
-                    EvalType::Char(c) => c as i32,
+                    EvalType::Float(n) => n as i64,
+                    EvalType::Char(c) => c as i64,
                 };
-                
+
                 self.stack.get(&index).unwrap_or(&Number::Int(0)).eval_type().unwrap()
             }
             _ => EvalType::Int(0)
@@ -36,12 +36,12 @@ impl Runner {
         result
     }
 }
-fn charify(i: i32) -> char {
+fn charify(i: i64) -> char {
     std::char::from_u32(i.rem_euclid(0x10FFFF) as u32).unwrap()
 }
 #[derive(Debug)]
 pub enum EvalType {
-    Int(i32),
+    Int(i64),
     Float(f32),
     Char(char),
 }

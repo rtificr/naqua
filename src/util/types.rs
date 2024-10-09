@@ -4,7 +4,7 @@ use crate::util::types::Keyword::Print;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Number {
-    Int(i32),
+    Int(i64),
     Float(f32),
     Thought
 }
@@ -12,7 +12,7 @@ impl Number {
     pub fn thought(&self) -> bool {
         if let Number::Thought = self { true } else { false }
     }
-    pub fn int(&self) -> Option<i32> {
+    pub fn int(&self) -> Option<i64> {
         if let Number::Int(n) = self { Some(*n) } else { None }
     }
     pub fn float(&self) -> Option<f32> {

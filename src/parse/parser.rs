@@ -35,7 +35,7 @@ impl<'t> Parser<'t> {
     }
     pub fn parse_expression(&mut self) -> Result<Option<Node>, String> {
         let expr = self.expr.clone();
-        self.skip_newlines();   
+        self.skip_newlines();
 
         let token = match self.peek().clone() {
             Some(token) => token.clone(),
@@ -79,7 +79,9 @@ impl<'t> Parser<'t> {
         }
     }
     pub fn peek(&self) -> Option<&Token> {
-        self.display();
+        if self.log {
+            self.display();
+        }
         self.tokens.get(self.pos)
     }
     pub fn advance(&mut self) -> Option<&Token> {
@@ -101,7 +103,7 @@ impl<'t> Parser<'t> {
     fn display(&self) {
         let toks = self.tokens.clone();
         print!("{:<10}", format!("POS {} > ", self.pos));
-        for (i, val) in toks.iter().enumerate() { 
+        for (i, val) in toks.iter().enumerate() {
             let txt = match val {
                 Token::Data(d) => match d {
                     Number::Int(i) => i.to_string(),

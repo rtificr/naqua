@@ -1,3 +1,4 @@
+-1 in 0
 0 in 0
 1 in 1
 
@@ -10,6 +11,9 @@ loop {
 
     0 in out 1
     1 in out 2
+
+    -1 in out -1 + 1
+    think out -1
 
     if 50 {
         break

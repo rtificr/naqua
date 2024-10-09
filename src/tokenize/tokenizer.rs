@@ -18,7 +18,14 @@ impl Tokenizer {
 
         while self.pos < chars.len() {
             let c = chars[self.pos];
-
+            
+            if c == '#' {
+                while self.pos < chars.len() && chars[self.pos] != '\n' {
+                    self.go();
+                }
+                self.go();
+                continue;
+            }
             if Is::whitespace(c) {
                 if c == '\n' {
                     self.row += 1;

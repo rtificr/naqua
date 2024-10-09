@@ -12,7 +12,7 @@ mod runtime;
 
 fn main() {
     let args = std::env::args().collect::<Vec<String>>();
-    let mut input;
+    let input;
 
     let mut should_log = args.contains(&String::from("-l"));
 
@@ -28,9 +28,8 @@ fn main() {
         input = fs::read_to_string(args.get(1).unwrap()).unwrap();
     }
     
-    should_log = true;
+    //should_log = true;
 
-    println!("Naqua v1.0.0");
     println!();
 
     let mut tokenizer = Tokenizer::new(input);
@@ -59,5 +58,4 @@ fn main() {
         }
         Err(e) => eprintln!("Tokenization error: {e}")
     }
-    println!("\n\nDone!");
 }
