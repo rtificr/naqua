@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 use std::ops::Deref;
-use std::thread::sleep;
-use std::time::Duration;
 use crate::parse::node::Node;
 use crate::util::types::Number;
 
@@ -37,7 +35,12 @@ impl Runner {
             }
             Node::Assign(i, val) => {
                 let index = i.to_num()?.int().ok_or_else(|| "Failed to convert index to integer")?;
-                let value = val.to_num().map_err(|e| e.to_string())?;
+                let value = match val.deref() {
+                    Node::Out(n) => self.stack_get(n.to_num()?),
+                    Node::Literal(n) => *n,
+                    Node::Eval(l, o, r) => self.eval(&Node::Eval(l.clone(), o.clone(), r.clone())).to_num().map_err(|()| String::new())?,
+                    _ => return Err(format!("Unable to assign a non-data type to a stack index! Found at expression #{}", self.expr))
+                };
                 self.stack.insert(index, value);
                 return Ok(false);
             }
@@ -70,5 +73,14 @@ impl Runner {
             _ => {}
         }
         Ok(false)
+    }
+    fn stack_get(&self, i: Number) -> Number {
+        let index = if i.int().is_none() {
+            i.float().unwrap().floor() as i32
+        } else {
+            i.int().unwrap()
+        };
+
+        self.stack.get(&index).or(Some(&Number::Int(0))).unwrap().clone()
     }
 }

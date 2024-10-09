@@ -22,6 +22,7 @@ impl Tokenizer {
             if Is::whitespace(c) {
                 if c == '\n' {
                     self.row += 1;
+                    tokens.push(Token::NewLine);
                 }
                 self.go();
                 continue;

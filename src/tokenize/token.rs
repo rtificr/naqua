@@ -6,6 +6,7 @@ pub enum Token {
     CloseBrace,
     Data(Number),
     Keyword(Keyword),
-    OpToken(Operator)
+    OpToken(Operator),
+    NewLine
 }
 

@@ -1,4 +1,5 @@
 use std::fs;
+use std::path::Path;
 use crate::parse::parser::Parser;
 use crate::runtime::runtime::Runner;
 use crate::tokenize::token::Token;
@@ -11,13 +12,23 @@ mod runtime;
 
 fn main() {
     let args = std::env::args().collect::<Vec<String>>();
+    let mut input;
 
-    if args.len() < 2 {
-        println!("Incorrect usage!");
-        println!("Correct usage: naqua <filename>");
-        return;
+    let mut should_log = args.contains(&String::from("-l"));
+
+    if args.len() < 2 || args.len() > 3 {
+        if Path::new("test.naq").exists() {
+            input = fs::read_to_string("test.naq").unwrap();
+        } else {
+            println!("Incorrect usage!");
+            println!("Correct usage: naqua <filename> <flags>");
+            return;
+        }
+    } else {
+        input = fs::read_to_string(args.get(1).unwrap()).unwrap();
     }
-    let input = fs::read_to_string(args.get(1).unwrap()).unwrap();
+    
+    should_log = true;
 
     println!("Naqua v1.0.0");
     println!();
@@ -25,19 +36,28 @@ fn main() {
     let mut tokenizer = Tokenizer::new(input);
     match tokenizer.tokenize() {
         Ok(tokens) => {
-            let mut parser = Parser::new(&tokens);
+            if should_log { println!("Tokens: \n{:?}\n", tokens); }
+            let mut parser = Parser::new(&tokens, should_log);
             match parser.parse() {
                 Ok(ast) => {
+                    if should_log {
+                        for node in &ast {
+                            println!("{:?}", node);
+                        }
+                        println!();
+                        println!("Running...");
+                        println!();
+                    }
                     let mut rt = Runner::new();
                     match rt.run(ast) {
                         Ok(_) => {}
-                        Err(e) => println!("Runtime error: {e}")
+                        Err(e) => eprintln!("Runtime error: {e}")
                     }
                 }
-                Err(e) => println!("Parsing error: {e}")
+                Err(e) => eprintln!("Parsing error: {e}")
             }
         }
-        Err(e) => println!("Tokenization error: {e}")
+        Err(e) => eprintln!("Tokenization error: {e}")
     }
     println!("\n\nDone!");
 }

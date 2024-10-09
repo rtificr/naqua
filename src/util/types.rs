@@ -86,4 +86,17 @@ impl Keyword {
             _ => None
         }
     }
+    pub fn to_str(&self) -> &str {
+        match self {
+            Keyword::Think => "think",
+            Keyword::Thought => "thought",
+            Keyword::In => "in",
+            Keyword::Out => "out",
+            Keyword::Print => "print",
+            Keyword::If => "if",
+            Keyword::Loop => "loop",
+            Keyword::Break => "break",
+            Keyword::Char => "char",
+        }
+    }
 }

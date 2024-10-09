@@ -7,13 +7,15 @@ use crate::util::types::{Number, Operator, Operator::*};
 impl Runner {
     pub fn op_eval(&self, lhs: Box<Node>, op: Operator, rhs: Box<Node>) -> EvalType {
         let l = match lhs.deref() {
+            Node::Out(n) => self.eval(&Node::Out(n.clone())).to_num().unwrap(),
             Node::Literal(n) => match n {
                 Number::Thought => self.thought,
                 _ => *n
             },
-            _ => Number::Int(0)
+            _ => Number::Int(0),
         };
         let r = match rhs.deref() {
+            Node::Out(n) => self.eval(&Node::Out(n.clone())).to_num().unwrap(),
             Node::Literal(n) => match n {
                 Number::Thought => self.thought,
                 _ => *n

@@ -23,17 +23,13 @@ impl Runner {
                 self.op_eval(l.clone(), *o, r.clone())
             }
             Node::Out(n) => {
-                match self.eval(n) {
-                    EvalType::Int(n) => self.stack.get(&self.eval(&Node::Literal(Number::Int(n))).to_num().unwrap().int().unwrap()).unwrap().eval_type().unwrap(),
-                    EvalType::Float(n) => self.stack.get(&self.eval(&Node::Literal(Number::Int(n as i32))).to_num().unwrap().int().unwrap()).unwrap().eval_type().unwrap(),
-                    EvalType::Char(c) => {
-                        if let Some(val) = self.stack.get(&(c as i32)).and_then(|v| v.eval_type()) {
-                            val
-                        } else {
-                            EvalType::Int(0)
-                        }
-                    }
-                }
+                let index = match self.eval(n) {
+                    EvalType::Int(n) => n,
+                    EvalType::Float(n) => n as i32,
+                    EvalType::Char(c) => c as i32,
+                };
+                
+                self.stack.get(&index).unwrap_or(&Number::Int(0)).eval_type().unwrap()
             }
             _ => EvalType::Int(0)
         };

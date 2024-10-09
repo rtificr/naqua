@@ -9,9 +9,8 @@ impl<'t> Parser<'t> {
         
         let cond = match self.peek() {
             Some(c) => match self.parse_num(match c {
-                Token::Data(n) => *n,
+                Token::Data(n) => Token::Data(*n),
                 _ => return Err(format!("Only data types can be compared to thoughts! Found at expression #{}", self.expr))
-
             }) {
                 Ok(Some(n)) => n,
                 Ok(None) => return Err(err_code(101)),
@@ -25,11 +24,13 @@ impl<'t> Parser<'t> {
 
         let mut body = Vec::new();
         
+        self.advance();
+        
         if let Some(Token::OpenBrace) = self.peek() {
             let mut brace_count = 1;
             self.advance();
             
-            while let Some(tok) = self.peek() {
+            while let Some(tok) = self.peek().cloned() {
                 match tok {
                     Token::OpenBrace => {
                         brace_count += 1;
@@ -41,6 +42,9 @@ impl<'t> Parser<'t> {
                             self.advance();
                             break;
                         }
+                    },
+                    Token::NewLine => {
+                        self.advance();
                     },
                     _ => {
                         match self.parse_expression() {

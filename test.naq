@@ -1,0 +1,14 @@
+think 0
+1 in 1
+2 in 4
+
+print out 1
+print out 2
+print 10 char
+loop {
+	print thought
+	think thought + 1
+	if 10 {
+		break
+	}
+}
