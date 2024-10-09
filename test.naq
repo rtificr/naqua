@@ -1,14 +1,17 @@
-think 0
+0 in 0
 1 in 1
-2 in 4
 
-print out 1
-print out 2
-print 10 char
 loop {
-	print thought
-	think thought + 1
-	if 10 {
-		break
-	}
+    2 in out 0 + out 1
+    print out 0
+    print 10 char
+
+    think out 0
+
+    0 in out 1
+    1 in out 2
+
+    if 50 {
+        break
+    }
 }

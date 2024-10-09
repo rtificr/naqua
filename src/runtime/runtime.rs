@@ -37,7 +37,11 @@ impl Runner {
                 let index = i.to_num()?.int().ok_or_else(|| "Failed to convert index to integer")?;
                 let value = match val.deref() {
                     Node::Out(n) => self.stack_get(n.to_num()?),
-                    Node::Literal(n) => *n,
+                    Node::Literal(n) => match *n {
+                        Number::Int(m) => Number::Int(m),
+                        Number::Float(m) => Number::Float(m),
+                        Number::Thought => self.thought
+                    },
                     Node::Eval(l, o, r) => self.eval(&Node::Eval(l.clone(), o.clone(), r.clone())).to_num().map_err(|()| String::new())?,
                     _ => return Err(format!("Unable to assign a non-data type to a stack index! Found at expression #{}", self.expr))
                 };
