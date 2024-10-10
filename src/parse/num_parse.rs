@@ -7,7 +7,7 @@ use crate::util::types::{Keyword, Number};
 use crate::util::types::Number::Thought;
 
 impl<'t> Parser<'t> {
-    pub fn parse_num(&mut self, token: Token) -> Result<Option<Node>, String> {
+    pub fn parse_num(&mut self, depth: u8, token: Token) -> Result<Option<Node>, String> {
         let mut node = match token {
             Token::Data(num) => {
                 let r = if num.thought() { Node::Literal(Thought) } else { Node::Literal(num) };
@@ -32,10 +32,10 @@ impl<'t> Parser<'t> {
                 self.advance(); // Move past the operator
                 let next = match self.peek().cloned() {
                     Some(Token::Data(n)) => {
-                        self.parse_num(Token::Data(n))?.ok_or_else(|| format!("Unable to parse a number after an operator! Found at expression #{}", self.expr))?
+                        self.parse_num(depth + 1, Token::Data(n))?.ok_or_else(|| format!("Unable to parse a number after an operator! Found at expression #{}", self.expr))?
                     }
                     Some(Token::Keyword(Keyword::Out)) => {
-                        self.parse_num(Token::Keyword(Keyword::Out))?.ok_or_else(|| format!("Unable to parse a number after an operator! Found at expression #{}", self.expr))?
+                        self.parse_num(depth + 1, Token::Keyword(Keyword::Out))?.ok_or_else(|| format!("Unable to parse a number after an operator! Found at expression #{}", self.expr))?
                     }
                     _ => return Err(format!("Unable to find a number after an operator! Found at expression #{}", self.expr))
                 };
@@ -52,14 +52,20 @@ impl<'t> Parser<'t> {
         }
 
         if self.log { println!("Checking for char..."); }
-
+        
         let result = match self.advance() {
             Some(Token::NewLine) => {
                 Ok(Some(node))
             }
             Some(&Token::Keyword(Keyword::Char)) => {
-                if self.log { println!("Char found!"); }
-                Ok(Some(Node::Char(Box::new(node))))
+                if depth == 0 {
+                    if self.log { println!("Char found!"); }
+                    Ok(Some(Node::Char(Box::new(node))))
+                } else {
+                    if self.log { println!("Char found, but it's not the root expression's!"); }
+                    self.undo();
+                    Ok(Some(node))
+                }
             }
             Some(_) | None => {
                 if self.log { println!("No char found!"); }
@@ -83,7 +89,7 @@ impl<'t> Parser<'t> {
             return Err(format!("Floats are not valid indices! Found at expression #{}", self.expr));
         }
         if self.log { println!("Parsing number within head {num:?}..."); }
-        let result = self.parse_num(Token::Data(num))?.unwrap();
+        let result = self.parse_num(0, Token::Data(num))?.unwrap();
         let expr = self.expr.clone();
 
         if self.log { println!("Head Peek: {:?}", self.peek()); }
@@ -102,7 +108,7 @@ impl<'t> Parser<'t> {
                 if self.log { println!("In found!"); }
                 self.advance(); // Move past the 'in' keyword
                 match self.peek().clone() {
-                    Some(n) => match self.parse_num(*n) {
+                    Some(n) => match self.parse_num(0, *n) {
                         Ok(Some(t)) => Ok(Some(Node::Assign(Box::new(result), Box::new(t)))),
                         Ok(None) => Err(format!("Unable to assign stack index to nothing! Found at expression #{expr}")),
                         Err(e) => Err(e)

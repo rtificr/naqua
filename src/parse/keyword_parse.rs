@@ -14,11 +14,11 @@ impl<'t> Parser<'t> {
                 Ok(None)
             }
             Some(Token::Data(n)) => {
-                match self.parse_num(Token::Data(n.clone()))? {
+                match self.parse_num(0, Token::Data(n.clone()))? {
                     Some(r) => Ok(Some(Node::Think(Box::new(r)))),
                     None => Ok(None)
                 }
-            },
+            }
             Some(Token::Keyword(Keyword::Out)) => {
                 match self.parse_out() {
                     Ok(Some(m)) => Ok(Some(Node::Think(Box::new(m)))),
@@ -37,26 +37,23 @@ impl<'t> Parser<'t> {
         if self.log { println!("Parsing Print..."); }
         self.advance();
         let expr = self.expr.clone();
-        
+
         let result = match self.peek() {
             Some(Token::NewLine) => {
                 self.advance();
                 Ok(None)
             }
             Some(Token::Data(n)) => {
-                match self.parse_num(Token::Data(n.clone()))? {
+                if self.log { println!("Parsing Print Data..."); }
+                match self.parse_num(0, Token::Data(n.clone()))? {
                     Some(r) => Ok(Some(Node::Print(Box::new(r)))),
                     None => Ok(None)
                 }
-            },
+            }
             Some(Token::Keyword(Keyword::Out)) => {
-                let peek = match self.peek() {
-                    Some(t) => t.clone(),
-                    None => return Err(format!("Unable to retrieve from a non-existent stack index! Found at expression #{}", self.expr))
-                };
-                
-                match self.parse_num(peek) {
-                    Ok(Some(m)) => Ok(Some(Node::Print(Box::new(m)))),
+                if self.log { println!("Parsing Print Out..."); }
+                match self.parse_out() {
+                    Ok(Some(m)) => Ok(Some(Node::Think(Box::new(m)))),
                     Ok(None) => Err(format!("Unable to retrieve from a non-existent stack index! Found at expression #{expr}")),
                     Err(e) => Err(e)
                 }

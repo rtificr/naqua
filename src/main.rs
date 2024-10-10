@@ -28,7 +28,7 @@ fn main() {
         input = fs::read_to_string(args.get(1).unwrap()).unwrap();
     }
     
-    //should_log = true;
+    should_log = true;
 
     println!();
 

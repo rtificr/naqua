@@ -8,7 +8,7 @@ impl<'t> Parser<'t> {
         self.advance();
         
         let cond = match self.peek() {
-            Some(c) => match self.parse_num(match c {
+            Some(c) => match self.parse_num(0, match c {
                 Token::Data(n) => Token::Data(*n),
                 _ => return Err(format!("Only data types can be compared to thoughts! Found at expression #{}", self.expr))
             }) {
