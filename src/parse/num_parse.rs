@@ -8,6 +8,7 @@ use crate::util::types::Number::Thought;
 
 impl<'t> Parser<'t> {
     pub fn parse_num(&mut self, depth: u8, token: Token) -> Result<Option<Node>, String> {
+        if self.log { println!("Parsing number {token:?}..."); }
         let mut node = match token {
             Token::Data(num) => {
                 let r = if num.thought() { Node::Literal(Thought) } else { Node::Literal(num) };

@@ -22,6 +22,7 @@ impl<'t> Parser<'t> {
         loop {
             match self.parse_expression() {
                 Ok(Some(n)) => {
+                    if self.log { println!("{:?}", n); }
                     nodes.push(n);
                     self.expr += 1;
                 }
