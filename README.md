@@ -14,7 +14,7 @@ Windows:
 * `if x { ... }` - runs code within braces if `x` is equivalent to the single-cell memory
 * `loop { ... }` - loops code within braces
 * `break` - breaks current loop/if statement
-* `#<text here>` - ignored when tokenizing (until the end of the line)
+* `#<text here>` - comment; ignored when tokenizing (until the end of the line)
 
 # Examples
 ## Hello, World!
