@@ -7,10 +7,16 @@ use crate::util::types::Number;
 impl Runner {
     pub fn eval(&self, node: &Node) -> EvalType {
         let result = match node {
-            Node::Literal(n) => match n {
-                Number::Int(n) => EvalType::Int(*n),
-                Number::Float(n) => EvalType::Float(*n),
-                Number::Thought => self.thought.eval_type().unwrap(),
+            Node::Literal(n) => {
+                match n {
+                    Number::Int(n) => {
+                        EvalType::Int(n.clone())
+                    },
+                    Number::Float(n) => {
+                        EvalType::Float(n.clone())
+                    },
+                    Number::Thought => self.thought.eval_type().unwrap(),
+                }
             }
             Node::Char(n) => {
                 match self.eval(n) {
@@ -50,7 +56,7 @@ impl EvalType {
         match self {
             EvalType::Int(i) => Ok(Number::Int(*i)),
             EvalType::Float(i) => Ok(Number::Float(*i)),
-            EvalType::Char(_) => Err(()),
+            EvalType::Char(_) => { Err(()) },
         }
     }
 }

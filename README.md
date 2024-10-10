@@ -14,7 +14,7 @@ Windows:
 * `if x { ... }` - runs code within braces if `x` is equivalent to the single-cell memory
 * `loop { ... }` - loops code within braces
 * `break` - breaks current loop/if statement
-* `#<text here>` - comment; ignored when tokenizing (until the end of the line)
+* `# <text here>` - comment; ignored when tokenizing (until the end of the line)
 
 # Examples
 ## Hello, World!
@@ -33,21 +33,13 @@ Windows:
 11 in 96 + 4         # d
 12 in 33             # !
 
-print out 0 char
-print out 1 char
-print out 2 char
-print out 3 char
-print out 4 char
-print out 5 char
-print out 6 char
-print out 7 char
-print out 8 char
-print out 9 char
-print out 10 char
-print out 11 char
-print out 12 char
-print 10 char # New line
-print 10 char # New line x2
+loop {                      # loop through indices 0-12
+    print out thought char
+    think thought + 1
+    if 13 {                 # stop at end
+        break
+    }
+}
 ```
 ## Fibonacci Sequence
 ```

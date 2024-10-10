@@ -150,7 +150,14 @@ impl<'t> Parser<'t> {
                         let r = Node::Out(Box::new(Node::Literal(n)));
                         Ok(Some(r))
                     }
-                    _ => Err(format!("Only integers can be used as stack indices! Found at expression #{}", self.expr))
+                    Number::Float(_) => {
+                        let r = Node::Out(Box::new(Node::Literal(n)));
+                        Ok(Some(r))
+                    }
+                    Number::Thought => {
+                        let r = Node::Out(Box::new(Node::Literal(Number::Thought)));
+                        Ok(Some(r))
+                    }
                 }
             }
             Some(_) => {

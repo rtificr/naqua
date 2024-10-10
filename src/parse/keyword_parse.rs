@@ -20,10 +20,10 @@ impl<'t> Parser<'t> {
                 }
             }
             Some(Token::Keyword(Keyword::Out)) => {
-                match self.parse_out() {
-                    Ok(Some(m)) => Ok(Some(Node::Think(Box::new(m)))),
-                    Ok(None) => Err(format!("Unable to retrieve from a non-existent stack index! Found at expression #{expr}")),
-                    Err(e) => Err(e)
+                if self.log { println!("Parsing Think Out..."); }
+                match self.parse_num(0, Token::Keyword(Keyword::Out))? {
+                    Some(m) => Ok(Some(Node::Think(Box::new(m)))),
+                    None => Err(format!("Unable to retrieve from a non-existent stack index! Found at expression #{expr}"))
                 }
             }
             Some(_) => Err(format!("Only data types can be imagined!: Found at expression #{}", self.expr)),
@@ -52,10 +52,9 @@ impl<'t> Parser<'t> {
             }
             Some(Token::Keyword(Keyword::Out)) => {
                 if self.log { println!("Parsing Print Out..."); }
-                match self.parse_out() {
-                    Ok(Some(m)) => Ok(Some(Node::Think(Box::new(m)))),
-                    Ok(None) => Err(format!("Unable to retrieve from a non-existent stack index! Found at expression #{expr}")),
-                    Err(e) => Err(e)
+                match self.parse_num(0, Token::Keyword(Keyword::Out))? {
+                    Some(m) => Ok(Some(Node::Print(Box::new(m)))),
+                    None => Err(format!("Unable to retrieve from a non-existent stack index! Found at expression #{expr}"))
                 }
             }
             Some(_) => Err(format!("Only data types can be printed!: Found at expression #{}", self.expr)),

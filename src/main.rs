@@ -28,7 +28,7 @@ fn main() {
         input = fs::read_to_string(args.get(1).unwrap()).unwrap();
     }
     
-    should_log = true;
+    // should_log = true;
 
     println!();
 
@@ -43,9 +43,7 @@ fn main() {
                         for node in &ast {
                             println!("{:?}", node);
                         }
-                        println!();
-                        println!("Running...");
-                        println!();
+                        if should_log { println!(); }
                     }
                     let mut rt = Runner::new();
                     match rt.run(ast) {
@@ -58,4 +56,5 @@ fn main() {
         }
         Err(e) => eprintln!("Tokenization error: {e}")
     }
+    println!();
 }
