@@ -1,5 +1,5 @@
 use crate::tokenize::token::Token;
-use crate::tokenize::token::Token::OpToken;
+use crate::tokenize::token::Token::{OpToken, RTKeyword};
 use crate::util::Is;
 use crate::util::types::{Keyword, Number, Operator};
 
@@ -14,7 +14,7 @@ impl Tokenizer {
     }
     pub fn tokenize(&mut self) -> Result<Vec<Token>, String> {
         let mut tokens = Vec::new();
-        let chars = self.input.chars().collect::<Vec<char>>();
+        let chars: Vec<char> = self.input.chars().collect();
 
         while self.pos < chars.len() {
             let c = chars[self.pos];
@@ -34,16 +34,23 @@ impl Tokenizer {
                 self.go();
                 continue;
             }
-            if Is::letter(c) {
+            if Is::letter(c) || "_".contains(c) {
                 let start_pos = self.pos;
-                while self.pos < chars.len() && Is::letter(chars[self.pos]) {
+                while self.pos < chars.len() && !Is::whitespace(chars[self.pos]) {
                     self.go();
                 }
-                let word = &self.input[start_pos..self.pos];
-                let k = Keyword::from(word).ok_or(format!("'{word}' not a keyword"))?;
+                let word = String::from(&self.input[start_pos..self.pos]);
+                match Keyword::from(word.as_str()) {
+                    Some(k) => {
+                        if k == Keyword::Thought { tokens.push(Token::Data(Number::Thought)) }
+                        else { tokens.push(Token::Keyword(k.clone())) };
+                    }
+                    None => {
+                        tokens.push(RTKeyword(word));
+                    }
+                }
 
-                if k == Keyword::Thought { tokens.push(Token::Data(Number::Thought)) }
-                else { tokens.push(Token::Keyword(k)) };
+
                 continue;
             }
             if Is::digit(c) || c == '-' {

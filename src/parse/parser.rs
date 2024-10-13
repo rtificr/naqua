@@ -1,7 +1,8 @@
+use std::collections::HashMap;
 use std::fmt::format;
 use std::thread::sleep;
 use colored::Colorize;
-use crate::parse::node::Node;
+use crate::parse::{ExprType, Node, ParserResult};
 use crate::tokenize::token::Token;
 use crate::util::types::{Keyword, Number};
 
@@ -11,19 +12,23 @@ pub struct Parser<'t> {
     pub expr: usize,
     pub log: bool,
 }
-
 impl<'t> Parser<'t> {
     pub fn new(tokens: &'t Vec<Token>, log: bool) -> Self {
         Self { tokens, pos: 0, expr: 0, log }
     }
-    pub fn parse(&mut self) -> Result<Vec<Node>, String> {
+    pub fn parse(&mut self) -> Result<ParserResult, String> {
         let mut nodes = Vec::new();
+        let mut macros = Vec::new();
         //println!("Parsing...");
         loop {
             match self.parse_expression() {
                 Ok(Some(n)) => {
                     if self.log { println!("{:?}", n); }
-                    nodes.push(n);
+                    match n {
+                        ExprType::Node(Some(node)) => nodes.push(node),
+                        ExprType::Macro(node) => macros.push(node),
+                        _ => {}
+                    }
                     self.expr += 1;
                 }
                 Ok(None) => break,
@@ -31,10 +36,21 @@ impl<'t> Parser<'t> {
             }
         }
         //println!("Parsed!");
-
-        Ok(nodes)
+        let mut macro_map = HashMap::new();
+        for (name, body) in macros {
+            macro_map.insert(name, body);
+        };
+        
+        Ok(ParserResult {
+            nodes,
+            macros: if !macro_map.is_empty() {
+                Some(macro_map)
+            } else {
+                None
+            }
+        })
     }
-    pub fn parse_expression(&mut self) -> Result<Option<Node>, String> {
+    pub fn parse_expression(&mut self) -> Result<Option<ExprType>, String> {
         let expr = self.expr.clone();
         self.skip_newlines();
 
@@ -43,36 +59,39 @@ impl<'t> Parser<'t> {
             None => return Ok(None)
         };
 
-
         if self.log {
             eprintln!("{}", format!("Parsing expression #{expr}, starting with token '{token:?}'...").bright_blue());
         }
         let r = match token {
             Token::Keyword(k) => {
                 match k {
-                    Keyword::Think => self.parse_think(),
-                    Keyword::In => Err(format!("'in' must follow a stack index! Found at expression #{expr}")),
-                    Keyword::Out => self.parse_out(),
-                    Keyword::Print => self.parse_print(),
-                    Keyword::If => self.parse_if(),
-                    Keyword::Loop => self.parse_loop(),
+                    Keyword::Think => ExprType::Node(self.parse_think()?),
+                    Keyword::In => return Err(self.err("'in' must follow a stack index!")),
+                    Keyword::Out => ExprType::Node(self.parse_out()?),
+                    Keyword::Print => ExprType::Node(self.parse_print()?),
+                    Keyword::If => ExprType::Node(self.parse_if()?),
+                    Keyword::Loop => ExprType::Node(self.parse_loop()?),
+                    Keyword::Run => ExprType::Node(self.parse_run()?),
+                    Keyword::Define => {
+                        ExprType::Macro(self.parse_def()?)
+                    },
                     Keyword::Break => {
                         self.advance();
-                        Ok(Some(Node::Break))
+                        ExprType::Node(Some(Node::Break))
                     }
                     _ => {
                         eprintln!("Keyword not recognized! Found at expression #{expr}");
                         self.advance();
-                        Ok(Some(Node::Break))
+                        ExprType::Node(Some(Node::Break))
                     }
                 }
             }
-            Token::Data(_) => self.parse_num_head(),
-            Token::OpToken(o) => Err(format!("Unexpected operator '{o}' at expression {expr}")),
+            Token::Data(_) => ExprType::Node(self.parse_num_head()?),
+            Token::OpToken(o) => return Err(self.err(format!("Unexpected operator '{}' found!", o.to_char()).as_str())),
             _ => return Ok(None)
         };
 
-        r
+        Ok(Some(r))
     }
     fn skip_newlines(&mut self) {
         while let Some(Token::NewLine) = self.peek() {

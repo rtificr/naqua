@@ -1,5 +1,5 @@
 use std::panic::resume_unwind;
-use crate::parse::node::Node;
+use crate::parse::Node;
 use crate::parse::parser::Parser;
 use crate::tokenize::token::Token;
 use crate::util::err::err_code;
@@ -11,7 +11,7 @@ impl<'t> Parser<'t> {
         if self.log { println!("Parsing number {token:?}..."); }
         let mut node = match token {
             Token::Data(num) => {
-                let r = if num.thought() { Node::Literal(Thought) } else { Node::Literal(num) };
+                let r = if num.is_thought() { Node::Literal(Thought) } else { Node::Literal(num) };
                 self.advance();
                 r
             },
@@ -86,9 +86,10 @@ impl<'t> Parser<'t> {
         };
         if self.log { println!("Parsing number head {num:?}..."); }
 
-        if num.int().is_none() {
+        if num.is_float() {
             return Err(format!("Floats are not valid indices! Found at expression #{}", self.expr));
         }
+
         if self.log { println!("Parsing number within head {num:?}..."); }
         let result = self.parse_num(0, Token::Data(num))?.unwrap();
         let expr = self.expr.clone();
@@ -109,7 +110,7 @@ impl<'t> Parser<'t> {
                 if self.log { println!("In found!"); }
                 self.advance(); // Move past the 'in' keyword
                 match self.peek().clone() {
-                    Some(n) => match self.parse_num(0, *n) {
+                    Some(n) => match self.parse_num(0, n.clone()) {
                         Ok(Some(t)) => Ok(Some(Node::Assign(Box::new(result), Box::new(t)))),
                         Ok(None) => Err(format!("Unable to assign stack index to nothing! Found at expression #{expr}")),
                         Err(e) => Err(e)

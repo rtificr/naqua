@@ -1,5 +1,5 @@
 use std::ops::Deref;
-use crate::parse::node::Node;
+use crate::parse::Node;
 use crate::runtime::eval::EvalType;
 use crate::runtime::runtime::Runner;
 use crate::util::types::{Number, Operator, Operator::*};
@@ -26,7 +26,7 @@ impl Runner {
         let l = eval_node(lhs.deref());
         let r = eval_node(rhs.deref());
 
-        if l.int().is_some() && r.int().is_some() {
+        if l.is_int() && r.is_int() {
             match op {
                 Add => EvalType::Int(l.int().unwrap() + r.int().unwrap()),
                 Sub => EvalType::Int(l.int().unwrap() - r.int().unwrap()),

@@ -1,5 +1,5 @@
 use std::fmt::{Display, Formatter};
-use crate::parse::node::Node;
+use crate::parse::Node;
 use crate::runtime::op_eval;
 use crate::runtime::runtime::Runner;
 use crate::util::types::Number;
@@ -48,7 +48,7 @@ fn charify(i: i64) -> char {
 #[derive(Debug)]
 pub enum EvalType {
     Int(i64),
-    Float(f32),
+    Float(f64),
     Char(char),
 }
 impl EvalType {

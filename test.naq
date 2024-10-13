@@ -1,1 +1,16 @@
-print 1 + 2 * 3
+think 65
+run print-abcs
+
+define print-abcs {
+	0 in thought #store thought
+	think 0
+	loop {
+		print 65 + thought char
+		think thought + 1
+
+		if 26 {
+			break
+		}
+	}
+	think out 0 #restore thought
+}

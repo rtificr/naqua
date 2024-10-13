@@ -5,21 +5,19 @@ use crate::util::types::Keyword::Print;
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Number {
     Int(i64),
-    Float(f32),
+    Float(f64),
     Thought
 }
 impl Number {
-    pub fn thought(&self) -> bool {
-        if let Number::Thought = self { true } else { false }
-    }
-    pub fn int(&self) -> Option<i64> {
-        if let Number::Int(n) = self { Some(*n) } else { None }
-    }
-    pub fn float(&self) -> Option<f32> {
+    pub fn is_thought(&self) -> bool { if let Number::Thought = self { true } else { false } }
+    pub fn int(&self) -> Option<i64> { if let Number::Int(n) = self { Some(*n) } else { None } }
+    pub fn is_int(&self) -> bool { if let Number::Int(_) = self { true } else { false } }
+    pub fn float(&self) -> Option<f64> {
         if let Number::Float(n) = self { Some(*n) } 
-        else if let Number::Int(n) = self { Some(*n as f32) } 
+        else if let Number::Int(n) = self { Some(*n as f64) }
         else { None }
     }
+    pub fn is_float(&self) -> bool { if let Number::Float(_) = self { true } else { false } }
     pub fn eval_type(&self) -> Option<EvalType> {
         match self {
             Number::Int(n) => Some(EvalType::Int(*n)), 
@@ -68,8 +66,10 @@ pub enum Keyword {
     Print,
     If,
     Loop,
+    Define,
     Break,
     Char,
+    Run
 }
 impl Keyword {
     pub fn from(input: &str) -> Option<Keyword> {
@@ -80,9 +80,11 @@ impl Keyword {
             "if" => Some(Keyword::If),
             "loop" => Some(Keyword::Loop),
             "break" => Some(Keyword::Break),
+            "define" => Some(Keyword::Define),
             "in" => Some(Keyword::In),
             "out" => Some(Keyword::Out),
             "char" => Some(Keyword::Char),
+            "run" => Some(Keyword::Run),
             _ => None
         }
     }
@@ -95,8 +97,10 @@ impl Keyword {
             Keyword::Print => "print",
             Keyword::If => "if",
             Keyword::Loop => "loop",
+            Keyword::Define => "define",
             Keyword::Break => "break",
             Keyword::Char => "char",
+            Keyword::Run => "run"
         }
     }
 }
