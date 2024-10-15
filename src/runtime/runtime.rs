@@ -28,11 +28,11 @@ impl Runner {
     fn exec(&mut self, node: Node) -> Result<bool, String> {
         match node {
             Node::Print(d) => {
-                print!("{}", self.eval(d.deref()));
+                print!("{}", self.eval(d.deref())?);
                 return Ok(false);
             }
             Node::Think(d) => {
-                self.thought = self.eval(d.deref()).to_num()
+                self.thought = self.eval(d.deref())?.to_num()
                     .map_err(|_| self.err("Unable to evaluate!"))?;
                 return Ok(false);
             }
@@ -40,7 +40,7 @@ impl Runner {
                 let index = match i.to_num()? {
                     Number::Int(n) => n,
                     Number::Float(n) => n.floor() as i64,
-                    Number::Thought => self.thought.float().unwrap().floor() as i64,
+                    Number::Thought => self.thought.float().floor() as i64,
                 };
                 
                 let value = match val.deref() {
@@ -50,7 +50,7 @@ impl Runner {
                         Number::Float(m) => Number::Float(m),
                         Number::Thought => self.thought
                     },
-                    Node::Eval(l, o, r) => self.eval(&Node::Eval(l.clone(), o.clone(), r.clone())).to_num().map_err(|()| String::new())?,
+                    Node::Eval(l, o, r) => self.eval(&Node::Eval(l.clone(), o.clone(), r.clone()))?.to_num().map_err(|()| String::new())?,
                     _ => return Err(self.err("Unable to assign a non-data type to a stack index!"))
                 };
                 self.stack.insert(index, value);
@@ -97,7 +97,7 @@ impl Runner {
     }
     fn stack_get(&self, i: Number) -> Number {
         let index = if i.int().is_none() {
-            i.float().unwrap().floor() as i64
+            i.float().floor() as i64
         } else {
             i.int().unwrap()
         };

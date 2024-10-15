@@ -12,10 +12,10 @@ impl Number {
     pub fn is_thought(&self) -> bool { if let Number::Thought = self { true } else { false } }
     pub fn int(&self) -> Option<i64> { if let Number::Int(n) = self { Some(*n) } else { None } }
     pub fn is_int(&self) -> bool { if let Number::Int(_) = self { true } else { false } }
-    pub fn float(&self) -> Option<f64> {
-        if let Number::Float(n) = self { Some(*n) } 
-        else if let Number::Int(n) = self { Some(*n as f64) }
-        else { None }
+    pub fn float(&self) -> f64 {
+        if let Number::Float(n) = self { *n }
+        else if let Number::Int(n) = self { *n as f64 }
+        else { 0. }
     }
     pub fn is_float(&self) -> bool { if let Number::Float(_) = self { true } else { false } }
     pub fn eval_type(&self) -> Option<EvalType> {
