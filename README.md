@@ -1,5 +1,5 @@
+# Naqua is love, Naqua is life
 <img src="https://github.com/user-attachments/assets/fc5da32d-723f-4288-af19-44e7c8d8e1a1" alt="naqua" width="200"/>
-
 
 # Usage
 Mac/Windows (Terminal/Shell):  
