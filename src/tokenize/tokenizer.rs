@@ -18,7 +18,7 @@ impl Tokenizer {
 
         while self.pos < chars.len() {
             let c = chars[self.pos];
-            
+
             if c == '#' {
                 while self.pos < chars.len() && chars[self.pos] != '\n' {
                     self.go();
@@ -36,7 +36,7 @@ impl Tokenizer {
             }
             if Is::letter(c) || "_".contains(c) {
                 let start_pos = self.pos;
-                while self.pos < chars.len() && !Is::whitespace(chars[self.pos]) {
+                while self.pos < chars.len() && Is::letter(chars[self.pos]) || Is::symbol(chars[self.pos]) {
                     self.go();
                 }
                 let word = String::from(&self.input[start_pos..self.pos]);
@@ -49,8 +49,6 @@ impl Tokenizer {
                         tokens.push(RTKeyword(word));
                     }
                 }
-
-
                 continue;
             }
             if Is::digit(c) || c == '-' {
@@ -71,7 +69,7 @@ impl Tokenizer {
                 }
 
                 let number_str = &self.input[start_pos..self.pos];
-                
+
                 if c == '-' && number_str.len() == 1 {
                     tokens.push(OpToken(Operator::Sub));
                     continue
