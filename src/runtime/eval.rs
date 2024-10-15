@@ -5,7 +5,7 @@ use crate::runtime::runtime::Runner;
 use crate::util::types::Number;
 
 impl Runner {
-    pub fn eval(&self, node: &Node) -> EvalType {
+    pub fn eval(&mut self, node: &Node) -> Result<EvalType, String> {
         let result = match node {
             Node::Literal(n) => {
                 match n {
@@ -19,17 +19,17 @@ impl Runner {
                 }
             }
             Node::Char(n) => {
-                match self.eval(n) {
+                match self.eval(n)? {
                     EvalType::Int(n) => EvalType::Char(charify(n)),
                     EvalType::Float(n) => EvalType::Char(charify(n.floor() as i64)),
                     EvalType::Char(c) => EvalType::Char(c)
                 }
             }
             Node::Eval(l, o, r) => {
-                self.op_eval(l.clone(), *o, r.clone())
+                self.op_eval(l.clone(), *o, r.clone())?
             }
             Node::Out(n) => {
-                let index = match self.eval(n) {
+                let index = match self.eval(n)? {
                     EvalType::Int(n) => n,
                     EvalType::Float(n) => n as i64,
                     EvalType::Char(c) => c as i64,
@@ -39,7 +39,7 @@ impl Runner {
             }
             _ => EvalType::Int(0)
         };
-        result
+        Ok(result)
     }
 }
 fn charify(i: i64) -> char {
