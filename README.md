@@ -15,6 +15,7 @@ Windows:
 * `out x` - evaluated as the number in stack index `x`
 * `x char` - evaluated as the character with ascii index `x`. characters cannot be stored as data (in single-cell memory or in the stack)
 * `run <name>` - runs macro named `<name>`
+* `spawn <name>` - runs macro named `<name>` on new thread with new runtime (stack + thought)
 * `if x { ... }` - runs code within braces if `x` is equivalent to the single-cell memory
 * `loop { ... }` - loops code within braces
 * `define <name> { ... }` - runs code within braces when `run <name>` is called
