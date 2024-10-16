@@ -7,7 +7,7 @@ pub enum Token {
     Data(Number),
     Keyword(Keyword),
     OpToken(Operator),
-    RTKeyword(String),
+    RTKeyword(String), // Run-time keyword, keyword evaluated at runtime (for macros)
     NewLine
 }
 

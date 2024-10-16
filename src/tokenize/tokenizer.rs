@@ -36,7 +36,7 @@ impl Tokenizer {
             }
             if Is::letter(c) || "_".contains(c) {
                 let start_pos = self.pos;
-                while self.pos < chars.len() && Is::letter(chars[self.pos]) || Is::symbol(chars[self.pos]) {
+                while self.pos < chars.len() && Is::rtk_compatible(chars[self.pos]) {
                     self.go();
                 }
                 let word = String::from(&self.input[start_pos..self.pos]);

@@ -1,19 +1,19 @@
-spawn c
-spawn c_
+spawn c0
+spawn c1
 
-define c {
+define c0 {
 	loop {
 		think thought + 1
-		print 1
+		print 0
 		if 1000 {
 			break
 		}
 	}
 }
-define c_ {
+define c1 {
 	loop {
 		think thought + 1
-		print 0
+		print 1
 		if 1000 {
 			break
 		}
