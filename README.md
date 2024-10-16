@@ -2,9 +2,12 @@
 <img src="https://github.com/user-attachments/assets/fc5da32d-723f-4288-af19-44e7c8d8e1a1" alt="naqua" width="200"/>
 
 # Usage
-Mac/Windows (Terminal/Shell):  
-`naqua <filepath>`  
-Windows:  
+### Mac/Windows (Terminal/Shell):  
+`naqua <filepath> <flags>`  
+
+Flags:
+* `-l` - logs tokens and displays the parsing process
+### Windows:  
 `file.naq > Open With > naqua.exe`
 
 # Syntax
