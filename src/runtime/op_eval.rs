@@ -35,6 +35,8 @@ impl Runner {
                     if r.float() == 0. { return Err(self.err("Attempted division by zero!")); }
                     EvalType::Float(l.float() / r.float())
                 }
+                Mod => EvalType::Int(l.int().unwrap() % r.int().unwrap()),
+                Exp => EvalType::Int(l.int().unwrap().pow(r.int().unwrap() as u32))
             }
         } else {
             match op {
@@ -44,7 +46,9 @@ impl Runner {
                 Div => {
                     if r.float() == 0. { return Err(self.err("Attempted division by zero!")); }
                     EvalType::Float(l.float() / r.float())
-                }
+                },
+                Mod => EvalType::Float(l.float() % r.float()),
+                Exp => EvalType::Float(l.float().powf(r.float()))
             }
         })
     }

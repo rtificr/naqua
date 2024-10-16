@@ -80,4 +80,23 @@ impl<'t> Parser<'t> {
         self.advance();
         result
     }
+    pub fn parse_spawn(&mut self) -> Result<Option<Node>, String> {
+        if self.log { println!("Parsing Run..."); }
+        self.advance();
+
+        let result = match self.peek() {
+            Some(Token::NewLine) => {
+                self.advance();
+                Ok(None)
+            }
+            Some(Token::RTKeyword(s)) => {
+                Ok(Some(Node::Spawn(s.clone())))
+            }
+            Some(Token::Keyword(_)) => Err(self.err("Unable to run a macro with reserved name!")),
+            Some(Token::Data(_)) => Err(self.err("Unable to run a data type!")),
+            _ => Err(self.err("Unable to run a non-existent macro!"))
+        };
+        self.advance();
+        result
+    }
 }

@@ -1,1 +1,21 @@
-print 10/0
+spawn c
+spawn c_
+
+define c {
+	loop {
+		think thought + 1
+		print 1
+		if 1000 {
+			break
+		}
+	}
+}
+define c_ {
+	loop {
+		think thought + 1
+		print 0
+		if 1000 {
+			break
+		}
+	}
+}

@@ -19,6 +19,7 @@ pub enum Node {
     Think(Box<Node>),
     Out(Box<Node>),
     Run(String),
+    Spawn(String),
     Break
 }
 impl Node {

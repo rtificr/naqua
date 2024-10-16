@@ -7,7 +7,6 @@ use crate::tokenize::tokenizer::Tokenizer;
 pub fn poll() -> Result<(), &'static str>{
     let args = std::env::args().collect::<Vec<String>>();
     let input;
-
     let mut should_log = args.contains(&String::from("-l"));
 
     if !(2..3).contains(&args.len()) {

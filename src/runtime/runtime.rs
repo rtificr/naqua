@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 use std::ops::Deref;
+use std::sync::{Arc, Mutex};
+use std::thread;
 use crate::parse::Node;
 use crate::util::types::Number;
 
@@ -8,6 +10,7 @@ pub struct Runner {
     pub thought: Number,
     pub macros: HashMap<String, Box<Vec<Node>>>,
     pub expr: usize,
+    thread_handles: Arc<Mutex<Vec<thread::JoinHandle<()>>>>,
 }
 impl Runner {
     pub fn new() -> Self {
@@ -16,6 +19,7 @@ impl Runner {
             thought: Number::Int(0),
             macros: HashMap::new(),
             expr: 0,
+            thread_handles: Arc::new(Mutex::new(Vec::new())),
         }
     }
     pub fn run(&mut self, nodes: Vec<Node>, macros: Option<HashMap<String, Box<Vec<Node>>>>) -> Result<(), String> {
@@ -23,6 +27,8 @@ impl Runner {
         for node in nodes {
             self.exec(node)?;
         }
+
+        self.wait_for_threads()?;
         Ok(())
     }
     fn exec(&mut self, node: Node) -> Result<bool, String> {
@@ -42,7 +48,7 @@ impl Runner {
                     Number::Float(n) => n.floor() as i64,
                     Number::Thought => self.thought.float().floor() as i64,
                 };
-                
+
                 let value = match val.deref() {
                     Node::Out(n) => self.stack_get(n.to_num()?),
                     Node::Literal(n) => match *n {
@@ -65,6 +71,25 @@ impl Runner {
                 }
                 return Ok(false);
             }
+            Node::Spawn(s) => {
+                let m = self.macros.get(&s).cloned().ok_or(self.err(&format!("Macro '{}' not found!", s)))?.clone();
+                let thread_handles = Arc::clone(&self.thread_handles);
+                let handle = thread::Builder::new()
+                    .name(s.clone())
+                    .spawn(move || {
+                        let mut rt = Runner::new();
+                        for node in m.deref() {
+                            if let Err(e) = rt.exec(node.clone()) {
+                                eprintln!("Error in spawned thread '{}': {}", s, e);
+                                break;
+                            }
+                        }
+                    })
+                    .map_err(|e| self.err(&format!("Failed to spawn thread: {}", e)))?;
+
+                thread_handles.lock().unwrap().push(handle);
+                return Ok(false)
+            }
             Node::If(cond, exec) => {
                 if cond.to_num()? == self.thought {
                     for node in exec.deref() {
@@ -84,7 +109,7 @@ impl Runner {
                             break;
                         }
                     }
-                    if broken { break }
+                    if broken { break; }
                 }
                 return Ok(false);
             }
@@ -94,6 +119,19 @@ impl Runner {
             _ => {}
         }
         Ok(false)
+    }
+    fn wait_for_threads(&self) -> Result<(), String> {
+        let mut handles = Vec::new();
+        {
+            let mut lock = self.thread_handles.lock().unwrap();
+            handles.append(&mut *lock);
+        }
+        for handle in handles {
+            if let Err(_) = handle.join() {
+                return Err("A thread panicked".to_string());
+            }
+        }
+        Ok(())
     }
     fn stack_get(&self, i: Number) -> Number {
         let index = if i.int().is_none() {

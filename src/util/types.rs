@@ -32,6 +32,8 @@ pub enum Operator {
     Sub,
     Mul,
     Div,
+    Exp,
+    Mod
 }
 impl Operator {
     pub fn from(c: char) -> Operator {
@@ -40,6 +42,8 @@ impl Operator {
             '-' => Operator::Sub,
             '*' => Operator::Mul,
             '/' => Operator::Div,
+            '^' => Operator::Exp,
+            '%' => Operator::Mod,
             _ => Operator::Add
         }
     }
@@ -48,7 +52,9 @@ impl Operator {
             Operator::Add => '+',
             Operator::Sub => '-',
             Operator::Mul => '*',
-            Operator::Div => '/'
+            Operator::Div => '/',
+            Operator::Exp => '^',
+            Operator::Mod => '%'
         }
     }
 }
@@ -69,7 +75,8 @@ pub enum Keyword {
     Define,
     Break,
     Char,
-    Run
+    Run,
+    Spawn
 }
 impl Keyword {
     pub fn from(input: &str) -> Option<Keyword> {
@@ -85,6 +92,7 @@ impl Keyword {
             "out" => Some(Keyword::Out),
             "char" => Some(Keyword::Char),
             "run" => Some(Keyword::Run),
+            "spawn" => Some(Keyword::Spawn),
             _ => None
         }
     }
@@ -100,7 +108,8 @@ impl Keyword {
             Keyword::Define => "define",
             Keyword::Break => "break",
             Keyword::Char => "char",
-            Keyword::Run => "run"
+            Keyword::Run => "run",
+            Keyword::Spawn => "spawn"
         }
     }
 }

@@ -78,11 +78,10 @@ impl<'t> Parser<'t> {
                     Keyword::Break => {
                         self.advance();
                         ExprType::Node(Some(Node::Break))
-                    }
+                    },
+                    Keyword::Spawn => ExprType::Node(self.parse_spawn()?),
                     _ => {
-                        eprintln!("Keyword not recognized! Found at expression #{expr}");
-                        self.advance();
-                        ExprType::Node(Some(Node::Break))
+                        return Err(self.err("Keyword not recognized!"));
                     }
                 }
             }
