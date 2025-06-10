@@ -69,3 +69,6 @@ loop {
     if 10 { break }     # break on 10th iteration
 }
 ```
+
+# p.s. 
+I know that the language doesn't use a stack, it uses memory addresses. However, I don't feel like fixing that at the moment.
